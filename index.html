@@ -1,12 +1,85 @@
-
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="permissions-policy" content="xr-spatial-tracking 'self'">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+      #example-scanning-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 2;
+      }
+      @media (min-aspect-ratio: 1/1) {
+        #example-scanning-overlay .inner {
+          width: 50vh;
+          height: 50vh;
+        }
+      }
+      @media (max-aspect-ratio: 1/1) {
+        #example-scanning-overlay .inner {
+          width: 80vw;
+          height: 80vw;
+        }
+      }
+
+      #example-scanning-overlay .inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        background:
+          linear-gradient(to right, white 10px, transparent 10px) 0 0,
+          linear-gradient(to right, white 10px, transparent 10px) 0 100%,
+          linear-gradient(to left, white 10px, transparent 10px) 100% 0,
+          linear-gradient(to left, white 10px, transparent 10px) 100% 100%,
+          linear-gradient(to bottom, white 10px, transparent 10px) 0 0,
+          linear-gradient(to bottom, white 10px, transparent 10px) 100% 0,
+          linear-gradient(to top, white 10px, transparent 10px) 0 100%,
+          linear-gradient(to top, white 10px, transparent 10px) 100% 100%;
+        background-repeat: no-repeat;
+        background-size: 40px 40px;
+      }
+
+      #example-scanning-overlay.hidden {
+	      display: none;
+      }
+
+      #example-scanning-overlay img {
+        opacity: 0.6;
+        width: 90%;
+        align-self: center;
+      }
+
+      #example-scanning-overlay .inner .scanline {
+        position: absolute;
+        width: 100%;
+        height: 10px;
+        background: white;
+        animation: move 2s linear infinite;
+      }
+      @keyframes move {
+        0%, 100% { top: 0% }
+        50% { top: calc(100% - 10px) }
+      }
+    </style>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: https://raw.githubusercontent.com/Rayasd396kr/ar/main/t1.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <div id="example-scanning-overlay" class="">
+      <div class="inner">
+	      <img id="image" src="">
+	      <div class="scanline"></div>
+      </div>
+    </div>
+    <a-scene mindar-image="uiScanning: #example-scanning-overlay; imageTargetSrc: https://raw.githubusercontent.com/Rayasd396kr/ar/main/t1.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         
         <a-assets>
             <a-asset-item id="bearModel" src="https://raw.githubusercontent.com/Rayasd396kr/ar/main/asset.gltf"></a-asset-item>
@@ -19,12 +92,37 @@
             <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="1 1 1" src="#bearModel" animation-mixer></a-gltf-model>
         </a-entity>
 
-        <a-plane id="example-plane" class="clickable" color="blue" opacity="1" position="0 0 -1" height="2" width="2" rotation="0 0 0"></a-plane>
-
         <a-entity id="raccoonEntity" mindar-image-target="targetIndex: 1">
             <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="0.05 0.05 0.05" src="#raccoonModel" animation-mixer></a-gltf-model>
         </a-entity>
 
     </a-scene>
+    <script>
+      window.addEventListener('DOMContentLoaded', (event) => {
+        const exampleTarget = document.querySelector('#bearEntity');
+        exampleTarget.addEventListener("targetFound", event => {
+          console.log("target found");
+        });
+    
+        const exampleTarget1 = document.querySelector('#raccoonEntity');
+        exampleTarget1.addEventListener("targetFound", event => {
+          console.log("target found1");
+        });
+      });
+    
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      // /img?image=b 獲取?後的參數image=b
+      const image = urlParams.get('image');
+      //獲取image的值b
+      const imgElement = document.getElementById('image');
+      imgElement.src = `${image}.png`;
+
+      
+
+
+
+    </script>
+    
   </body>
 </html>
