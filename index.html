@@ -79,7 +79,7 @@
 	      <div class="scanline"></div>
       </div>
     </div>
-    <a-scene mindar-image="uiScanning: #example-scanning-overlay; imageTargetSrc: https://raw.githubusercontent.com/Rayasd396kr/ar/main/t1.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene mindar-image="uiScanning: #example-scanning-overlay;filterMinCF:0.0001; filterBeta: 0.001;imageTargetSrc: https://raw.githubusercontent.com/Rayasd396kr/ar/main/t1.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         
         <a-assets>
             <a-asset-item id="bearModel" src="https://raw.githubusercontent.com/Rayasd396kr/ar/main/asset.gltf"></a-asset-item>
@@ -89,10 +89,14 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity id="bearEntity" mindar-image-target="targetIndex: 0" >
-            <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="1 1 1" src="#bearModel" animation-mixer></a-gltf-model>
+          <a-plane opacity="0.5" color="white" width="2" height="1" position="0 0 -2"></a-plane>
+          <a-text value="test" color="black" align="center" position="0 0 0"></a-text>
+            <!-- <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="1 1 1" src="#bearModel" animation-mixer></a-gltf-model> -->
         </a-entity>
 
         <a-entity id="raccoonEntity" mindar-image-target="targetIndex: 1">
+            <a-plane opacity="0.5" color="white" width="2" height="1" position="0 0 -2"></a-plane>
+            <a-text value="example" color="black" align="center" position="0 0 0"></a-text>
             <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="0.05 0.05 0.05" src="#raccoonModel" animation-mixer></a-gltf-model>
         </a-entity>
 
