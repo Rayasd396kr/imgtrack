@@ -70,15 +70,73 @@
         0%, 100% { top: 0% }
         50% { top: calc(100% - 10px) }
       }
+      .toggle-button {
+          margin: 20px;
+          padding: 10px;
+          background-color: #007BFF;
+          color: white;
+          border: none;
+          cursor: pointer;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          z-index: 1000;
+      }
+
+      .collapsible-window {
+          display: none;
+          width: 200px;
+          height: 100px;
+          background-color: white;
+          border: 1px solid #ccc;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          position: absolute;
+          top: 70px;
+          right: 25px;
+          padding: 20px;
+          z-index: 999;
+      }
+
+      .collapsible-window h2 {
+          margin-top: 0;
+      }
+      table {
+          width: 100%;
+          border-collapse: collapse;
+      }
+
+      td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: center;
+      }
+
+      
     </style>
   </head>
   <body>
-    <div id="example-scanning-overlay" class="">
+    <div id="example-scanning-overlay" class="grid-container">
       <div class="inner">
-	      <img id="image" src="">
-	      <div class="scanline"></div>
+        <img id="image" src="">
+        <div class="scanline"></div>
       </div>
     </div>
+    <button class="toggle-button" onclick="toggleWindow()">集點卡</button>
+    
+    <div class="collapsible-window" id="collapsibleWindow">
+      <div class="table-container">
+        <table>
+                <tr>
+                    <td id="cell-1">1</td><td id="cell-2">2</td><td>3</td>
+                </tr>
+                <tr>
+                    <td>4</td><td>5</td><td>6</td>
+              </tr>
+        </table>
+        <button onclick="resetLocalStorage()" style="display: block;margin: 10px auto 0;">重置</button>
+      </div>
+    </div>
+    
     <a-scene mindar-image="uiScanning: #example-scanning-overlay;filterMinCF:0.0001; filterBeta: 0.001;imageTargetSrc: https://raw.githubusercontent.com/Rayasd396kr/ar/main/t1.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         
         <a-assets>
@@ -89,32 +147,116 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity id="bearEntity" mindar-image-target="targetIndex: 0" >
-          <a-plane opacity="0.5" color="white" width="2" height="1" position="0 0 -2"></a-plane>
+          <a-plane opacity="0.5" color="white" width="10" height="10" position="0 0 0"></a-plane>
           <a-text value="test" color="black" align="center" position="0 0 0"></a-text>
             <!-- <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="1 1 1" src="#bearModel" animation-mixer></a-gltf-model> -->
         </a-entity>
 
         <a-entity id="raccoonEntity" mindar-image-target="targetIndex: 1">
-            <a-plane opacity="0.5" color="white" width="2" height="1" position="0 0 -2"></a-plane>
+            <!-- <a-plane opacity="0.5" color="white" width="2" height="1" position="0 0 -2"></a-plane> -->
             <a-text value="example" color="black" align="center" position="0 0 0"></a-text>
             <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="0.05 0.05 0.05" src="#raccoonModel" animation-mixer></a-gltf-model>
         </a-entity>
 
     </a-scene>
     <script>
-      window.addEventListener('DOMContentLoaded', (event) => {
-        const exampleTarget = document.querySelector('#bearEntity');
-        exampleTarget.addEventListener("targetFound", event => {
-          console.log("target found");
-        });
-    
-        const exampleTarget1 = document.querySelector('#raccoonEntity');
-        exampleTarget1.addEventListener("targetFound", event => {
-          console.log("target found1");
-        });
-      });
-    
       
+      function toggleWindow() {
+          const windowElement = document.getElementById('collapsibleWindow');
+          if (windowElement.style.display === 'none' || windowElement.style.display === '') {
+              windowElement.style.display = 'block';
+          } else {
+              windowElement.style.display = 'none';
+          }
+      }
+
+      document.addEventListener('DOMContentLoaded', (event) => {
+          document.getElementById('collapsibleWindow').style.display = 'none';
+          const okStatus1 = localStorage.getItem('okStatus1');
+          const okStatus2 = localStorage.getItem('okStatus2');
+            if (okStatus1 === 'true') {
+                document.getElementById('cell-1').innerText = 'OK';
+            }
+            if (okStatus2 === 'true') {
+                document.getElementById('cell-2').innerText = 'OK';
+            }
+      });
+
+      let hasShownCongratulations = false;
+
+      const exampleTarget = document.querySelector('#bearEntity');
+
+      exampleTarget.addEventListener("targetFound", event => {
+          console.log("target found");
+          document.getElementById('cell-1').innerText = 'OK';
+          localStorage.setItem('okStatus1', 'true');
+          if (!hasShownCongratulations) {
+              const congratulationsMessage = document.createElement('div');
+              congratulationsMessage.textContent = '恭喜您找到了';
+              congratulationsMessage.style.position = 'fixed';
+              congratulationsMessage.style.top = '50%';
+              congratulationsMessage.style.left = '50%';
+              congratulationsMessage.style.transform = 'translate(-50%, -50%)';
+              congratulationsMessage.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+              congratulationsMessage.style.padding = '20px';
+              congratulationsMessage.style.borderRadius = '10px';
+              congratulationsMessage.style.zIndex = '9999';
+
+              document.body.appendChild(congratulationsMessage);
+
+              hasShownCongratulations = true;
+
+              setTimeout(() => {
+                  congratulationsMessage.remove();
+              }, 2000); 
+          }
+      });
+
+
+
+      let hasShownCongratulations2 = false;
+
+      const exampleTarget1 = document.querySelector('#raccoonEntity');
+
+      exampleTarget1.addEventListener("targetFound", event => {
+          console.log("target found1");
+          document.getElementById('cell-2').innerText = 'OK';
+          localStorage.setItem('okStatus2', 'true');
+          if (!hasShownCongratulations2) {
+              const congratulationsMessage = document.createElement('div');
+              congratulationsMessage.textContent = '恭喜您找到了';
+              congratulationsMessage.style.position = 'fixed';
+              congratulationsMessage.style.top = '50%';
+              congratulationsMessage.style.left = '50%';
+              congratulationsMessage.style.transform = 'translate(-50%, -50%)';
+              congratulationsMessage.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+              congratulationsMessage.style.padding = '20px';
+              congratulationsMessage.style.borderRadius = '10px';
+              congratulationsMessage.style.zIndex = '9999';
+
+              
+              document.body.appendChild(congratulationsMessage);
+
+              
+              hasShownCongratulations2 = true;
+
+              
+              setTimeout(() => {
+                  congratulationsMessage.remove();
+              }, 2000); 
+          }
+      });
+
+      
+      function resetLocalStorage() {
+          localStorage.removeItem('okStatus1');
+          document.getElementById('cell-1').innerText = '1';
+          localStorage.removeItem('okStatus2');
+          document.getElementById('cell-2').innerText = '2';
+      }
+     
+    
+      //https://rayasd396kr.github.io/imgtrack/?image=${imageUrl}
       const urlParams = new URLSearchParams(window.location.search);
       // /img?image=b 獲取?後的參數image=b
       const image = urlParams.get('image');
