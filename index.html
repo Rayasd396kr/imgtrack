@@ -209,6 +209,8 @@
               setTimeout(() => {
                   congratulationsMessage.remove();
               }, 2000); 
+
+              window.parent.postMessage({ cellId: 'cell-1', value: 'OK' }, '*');
           }
       });
 
@@ -244,9 +246,12 @@
               setTimeout(() => {
                   congratulationsMessage.remove();
               }, 2000); 
+
+              //傳送值
+              window.parent.postMessage({ cellId: 'cell-2', value: 'OK' }, '*');
           }
       });
-
+      
       
       function resetLocalStorage() {
           localStorage.removeItem('okStatus1');
